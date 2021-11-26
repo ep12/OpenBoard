@@ -36,6 +36,12 @@ class UBBlackoutWidget;
 class UBBoardView;
 class QDesktopWidget;
 
+struct ScreenRole {
+    bool primary;
+    bool ignored;
+    int page_offset;
+};
+
 class UBDisplayManager : public QObject
 {
     Q_OBJECT;
@@ -134,6 +140,9 @@ class UBDisplayManager : public QObject
 
         bool mUseMultiScreen;
 
+        QWidget* getPageWidget(int page);
+
+        QMap<QScreen*, ScreenRole> mScreenRoles;
 };
 
 #endif /* UBDISPLAYMANAGER_H_ */
