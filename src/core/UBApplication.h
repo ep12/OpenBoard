@@ -103,7 +103,6 @@ class UBApplication : public SingleApplication
         static bool isFromWeb(QString url);
 
         static QScreen* controlScreen();
-        static int controlScreenIndex();
 
     signals:
 

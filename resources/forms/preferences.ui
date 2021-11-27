@@ -571,24 +571,10 @@
             </property>
            </spacer>
           </item>
-          <item row="2" column="2">
-           <widget class="QCheckBox" name="swapControlAndDisplayScreensCheckBox">
-            <property name="text">
-             <string>Swap control display and view display</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
+          <item row="1" column="1">
            <widget class="QCheckBox" name="displayBrowserPageCheckBox">
             <property name="text">
              <string>Show internal web page content on secondary screen or projector</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QCheckBox" name="swapDisplayScreensCheckBox">
-            <property name="text">
-             <string>Swap first and second view displays</string>
             </property>
            </widget>
           </item>

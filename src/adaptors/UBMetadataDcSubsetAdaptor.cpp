@@ -238,10 +238,7 @@ QMap<QString, QVariant> UBMetadataDcSubsetAdaptor::load(QString pPath)
 
     if (!sizeFound)
     {
-        QDesktopWidget* dw = qApp->desktop();
-        int controlScreenIndex = dw->primaryScreen();
-
-        QSize docSize = dw->screenGeometry(controlScreenIndex).size();
+        QSize docSize = UBApplication::controlScreen()->geometry().size();
         docSize.setHeight(docSize.height() - 70); // 70 = toolbar height
 
         qWarning() << "Document size not found, using default view size" << docSize;
