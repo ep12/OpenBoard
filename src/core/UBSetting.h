@@ -114,6 +114,31 @@ class UBColorListSetting : public UBSetting
         qreal mAlpha;
 };
 
+/*
+class UBScreenSetting : public UBSetting
+{
+    Q_OBJECT
+
+    public:
+        UBScreenSetting(UBSettings* parent = 0);
+
+        UBScreenSetting(UBSettings* owner, const QString& pDomain,
+                const ...............................................);
+
+        virtual ~UBScreenSetting();
+
+        virtual QVariant reset();
+
+        QString domain() {
+            return QString("Screens.%s").arg(mName);
+        }
+
+    protected:
+        QString mName;
+        bool mPrimary;
+        bool mIgnored;
+        int mPageOffset;
+}*/
 
 
 #endif /* UBSETTING_H_ */

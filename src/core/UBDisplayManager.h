@@ -62,37 +62,26 @@ class UBDisplayManager : public QObject
 
         void setPreviousDisplaysWidgets(QList<UBBoardView*> pPreviousViews);
 
-        bool hasControl()
-        {
-            return mControlScreenIndex > -1;
-        }
+        QScreen* controlScreen();
 
-        bool hasDisplay()
-        {
-            return mDisplayScreenIndex > -1;
-        }
+        QScreen* displayScreen();
 
-        bool hasPrevious()
-        {
-            return !mPreviousScreenIndexes.isEmpty();
-        }
+        bool hasControl() { return controlScreen() != 0; }
 
-        enum DisplayRole
-        {
-            None = 0, Control, Display, Previous1, Previous2, Previous3, Previous4, Previous5
-        };
+        bool hasDisplay() { return displayScreen() != 0; }
+
+        bool hasPrevious() { return numPreviousViews() > 0; }
 
         bool useMultiScreen() { return mUseMultiScreen; }
 
         void setUseMultiScreen(bool pUse);
 
-        int controleScreenIndex()
-        {
-            return mControlScreenIndex;
+        QRect controlGeometry() {
+            return controlScreen()->geometry();
         }
-
-        QRect controlGeometry();
-        QRect displayGeometry();
+        QRect displayGeometry() {
+            return displayScreen()->geometry();
+        }
 
    signals:
 
@@ -109,14 +98,11 @@ class UBDisplayManager : public QObject
 
         void unBlackout();
 
-        void setRoleToScreen(DisplayRole role, int screenIndex);
-
-        void swapDisplayScreens(bool swap);
     private:
 
         void positionScreens();
 
-        void initScreenIndexes();
+        void getScreenRoles();
 
         int mControlScreenIndex;
 
@@ -135,8 +121,6 @@ class UBDisplayManager : public QObject
         QList<UBBoardView*> mPreviousDisplayWidgets;
 
         QList<UBBlackoutWidget*> mBlackoutWidgets;
-
-        QList<DisplayRole> mScreenIndexesRoles;
 
         bool mUseMultiScreen;
 

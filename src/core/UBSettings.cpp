@@ -243,7 +243,6 @@ void UBSettings::init()
     appEnableAutomaticSoftwareUpdates = new UBSetting(this, "App", "EnableAutomaticSoftwareUpdates", false);
     appSoftwareUpdateURL = new UBSetting(this, "App", "SoftwareUpdateURL", "http://www.openboard.ch/update.json");
     appHideCheckForSoftwareUpdate = new UBSetting(this, "App", "HideCheckForSoftwareUpdate", false);
-    appHideSwapDisplayScreens = new UBSetting(this, "App", "HideSwapDisplayScreens", true);
     appToolBarOrientationVertical = new UBSetting(this, "App", "ToolBarOrientationVertical", false);
     appPreferredLanguage = new UBSetting(this,"App","PreferredLanguage", "");
 
@@ -463,7 +462,6 @@ void UBSettings::init()
     intranetPodcastAuthor = new UBSetting(this, "IntranetPodcast", "Author", "");
 
     KeyboardLocale = new UBSetting(this, "Board", "StartupKeyboardLocale", 0);
-    swapControlAndDisplayScreens = new UBSetting(this, "App", "SwapControlAndDisplayScreens", false);
 
     angleTolerance = new UBSetting(this, "App", "AngleTolerance", 4);
     historyLimit = new UBSetting(this, "Web", "HistoryLimit", 15);

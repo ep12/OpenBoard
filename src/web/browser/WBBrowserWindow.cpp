@@ -184,7 +184,7 @@ WBHistoryManager *WBBrowserWindow::historyManager()
 
 QSize WBBrowserWindow::sizeHint() const
 {
-    QRect desktopRect = QApplication::desktop()->screenGeometry(UBApplication::controlScreenIndex());
+    QRect desktopRect = UBApplication::controlScreen()->geometry();
     QSize size = desktopRect.size() * qreal(0.9);
     return size;
 }

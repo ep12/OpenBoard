@@ -258,7 +258,6 @@ class UBSettings : public QObject
         UBSetting* appEnableAutomaticSoftwareUpdates;
         UBSetting* appSoftwareUpdateURL;
         UBSetting* appHideCheckForSoftwareUpdate;
-        UBSetting* appHideSwapDisplayScreens;
         UBSetting* appToolBarOrientationVertical;
         UBSetting* appPreferredLanguage;
 
@@ -409,7 +408,6 @@ class UBSettings : public QObject
         UBSetting* pageSize;
 
         UBSetting* KeyboardLocale;
-        UBSetting* swapControlAndDisplayScreens;
 
         UBSetting* angleTolerance;
         UBSetting* historyLimit;

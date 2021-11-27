@@ -154,16 +154,6 @@ void UBPreferencesController::wire()
 
     connect(mPreferencesUI->useExternalBrowserCheckBox, SIGNAL(clicked(bool)), settings->webUseExternalBrowser, SLOT(setBool(bool)));
     connect(mPreferencesUI->displayBrowserPageCheckBox, SIGNAL(clicked(bool)), settings->webShowPageImmediatelyOnMirroredScreen, SLOT(setBool(bool)));
-    connect(mPreferencesUI->swapControlAndDisplayScreensCheckBox, SIGNAL(clicked(bool)), settings->swapControlAndDisplayScreens, SLOT(setBool(bool)));
-    connect(mPreferencesUI->swapControlAndDisplayScreensCheckBox, SIGNAL(clicked(bool)), UBApplication::applicationController->displayManager(), SLOT(reinitScreens(bool)));
-    if (settings->appHideSwapDisplayScreens->get().toBool())
-    {
-        mPreferencesUI->swapDisplayScreensCheckBox->hide();
-    }
-    else
-    {
-        connect(mPreferencesUI->swapDisplayScreensCheckBox, SIGNAL(clicked(bool)), UBApplication::applicationController->displayManager(), SLOT(swapDisplayScreens(bool)));
-    }
 
     connect(mPreferencesUI->toolbarAtTopRadioButton, SIGNAL(clicked(bool)), this, SLOT(toolbarPositionChanged(bool)));
     connect(mPreferencesUI->toolbarAtBottomRadioButton, SIGNAL(clicked(bool)), this, SLOT(toolbarPositionChanged(bool)));
@@ -296,7 +286,6 @@ void UBPreferencesController::init()
 
     mPreferencesUI->useExternalBrowserCheckBox->setChecked(settings->webUseExternalBrowser->get().toBool());
     mPreferencesUI->displayBrowserPageCheckBox->setChecked(settings->webShowPageImmediatelyOnMirroredScreen->get().toBool());
-    mPreferencesUI->swapControlAndDisplayScreensCheckBox->setChecked(settings->swapControlAndDisplayScreens->get().toBool());
     mPreferencesUI->webHomePage->setText(settings->webHomePage->get().toString());
 
     mPreferencesUI->proxyUsername->setText(settings->proxyUsername());

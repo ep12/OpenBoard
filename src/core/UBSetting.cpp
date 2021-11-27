@@ -176,3 +176,17 @@ void UBColorListSetting::setAlpha(qreal pAlpha)
 
     mOwner->colorChanged();
 }
+
+
+/*
+UBScreenSetting::UBScreenSetting(UBSettings* parent)
+    : UBSetting(parent) 
+{
+    // NOOP
+}
+
+UBScreenSetting::UBScreenSetting(UBSettings* owner, const QString& pDomain,
+        const QString& pKey, const QVariant& pDefaultValue)
+    : UBSetting(owner, pDomain, pKey, pDefaultValue)
+    , mAlpha(pAlpha)
+*/

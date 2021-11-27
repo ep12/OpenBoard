@@ -62,6 +62,7 @@ Makefile.Debug
 Makefile.Release
 
 buildContext
+.qmake.stash
 
 # plugins #
 ###########
