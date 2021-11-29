@@ -24,7 +24,7 @@
  * along with OpenBoard. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstdio> // XXX: TEMP
+#include <cstdio> // TODO: kill TEMP
 
 #include "UBDisplayManager.h"
 

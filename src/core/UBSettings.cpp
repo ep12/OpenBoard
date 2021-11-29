@@ -1504,4 +1504,7 @@ void UBSettings::checkNewSettings()
     // CrossedBackground changed in 1.4 (no longer a bool but an enum; can be crossed or ruled)
     removeSetting("Board/CrossedBackground");
 
+    // The new screen management does not require those settings.
+    removeSetting("App/HideSwapDisplayScreens");
+    removeSetting("App/SwapControlAndDisplayScreens");
 }
