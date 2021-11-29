@@ -50,26 +50,42 @@
 
 UBDisplayManager::UBDisplayManager(QObject *parent)
     : QObject(parent)
-    , mControlScreenIndex(-1)
-    , mDisplayScreenIndex(-1)
     , mControlWidget(0)
     , mDisplayWidget(0)
     , mDesktopWidget(0)
+    , mIsShowingDesktop(false)
 {
-    mDesktop = qApp->desktop();  // This is deprecated!
-
     mScreenRoles = QMap<QScreen*, ScreenRole>();
 
     mUseMultiScreen = UBSettings::settings()->appUseMultiscreen->get().toBool();
 
     getScreenRoles();
 
-    connect(mDesktop, &QDesktopWidget::resized, this, &UBDisplayManager::adjustScreens);
-    connect(mDesktop, &QDesktopWidget::workAreaResized, this, &UBDisplayManager::adjustScreens);
+    connect(qApp, &QGuiApplication::screenAdded, this, &UBDisplayManager::addOrRemoveScreen);
+    connect(qApp, &QGuiApplication::screenRemoved, this, &UBDisplayManager::addOrRemoveScreen);
 }
 
 UBDisplayManager::~UBDisplayManager() {}
 
+void UBDisplayManager::connectScreenSignals() {
+    QMapIterator<QScreen*, ScreenRole> it(mScreenRoles);
+    while (it.hasNext()) {
+        it.next();
+        QScreen* screen = it.key();
+        connect(screen, &QScreen::geometryChanged, this, &UBDisplayManager::screenGeometryChanged);
+        connect(screen, &QScreen::availableGeometryChanged, this, &UBDisplayManager::screenGeometryChanged);
+    }
+}
+
+void UBDisplayManager::disconnectScreenSignals() {
+    QMapIterator<QScreen*, ScreenRole> it(mScreenRoles);
+    while (it.hasNext()) {
+        it.next();
+        QScreen* screen = it.key();
+        disconnect(screen, &QScreen::geometryChanged, this, &UBDisplayManager::screenGeometryChanged);
+        disconnect(screen, &QScreen::availableGeometryChanged, this, &UBDisplayManager::screenGeometryChanged);
+    }
+}
 
 int UBDisplayManager::numScreens() {
     // TODO: should this return the number of available screens
@@ -124,7 +140,6 @@ void UBDisplayManager::getScreenRoles() {
     QList<QScreen*> screens = qApp->screens();
     QList<QString> names = QList<QString>();
     mScreenRoles.clear();
-    mPreviousScreenIndexes.clear();  // TODO: kill that
     // TODO: and now make that configurable!
     printf("<names>\n");
     for (int i = 0; i < screens.size(); i++) {
@@ -136,14 +151,11 @@ void UBDisplayManager::getScreenRoles() {
             role.ignored = true;
         } else if (name == "Virtual-2") {
             role.primary = true;
-            mControlScreenIndex = i;  // TODO: kill that
         } else if (name == "Virtual-3") {
-            mDisplayScreenIndex = i;  // TODO: kill that
             // nop
             // role.page_offset = 2;
         } else if (name == "Virtual-4") {
             role.page_offset = 1;
-            mPreviousScreenIndexes.append(i);  // TODO: kill that
         }
         mScreenRoles[screen] = role;
 
@@ -172,7 +184,7 @@ void UBDisplayManager::setDisplayWidget(QWidget* pDisplayWidget) {
         }
         mDisplayWidget = pDisplayWidget;
         mDisplayWidget->setGeometry(displayGeometry());
-        if (UBSettings::settings()->appUseMultiscreen->get().toBool())
+        if (numScreens() > 1 && UBSettings::settings()->appUseMultiscreen->get().toBool())
             UBPlatformUtils::showFullScreen(mDisplayWidget);
     }
 }
@@ -185,21 +197,25 @@ void UBDisplayManager::setPreviousDisplaysWidgets(QList<UBBoardView*> pPreviousV
     mPreviousDisplayWidgets = pPreviousViews;
 }
 
-void UBDisplayManager::reinitScreens(bool swap) {
-    // TODO: remove that deprecated thing
-    Q_UNUSED(swap);
-    adjustScreens(-1);
-}
-
-void UBDisplayManager::adjustScreens(int screen)
-{
-    // TODO: remove the screen argument everywhere
-    Q_UNUSED(screen);
+void UBDisplayManager::adjustScreens() {
+    disconnectScreenSignals();
     getScreenRoles();
+    connectScreenSignals();
     positionScreens();
     emit screenLayoutChanged();
 }
-
+void UBDisplayManager::adjustScreens(int screen) {
+    Q_UNUSED(screen);
+    adjustScreens();
+}
+void UBDisplayManager::screenGeometryChanged(QRect geometry) {
+    Q_UNUSED(geometry);
+    adjustScreens();
+}
+void UBDisplayManager::addOrRemoveScreen(QScreen* screen) {
+    Q_UNUSED(screen);
+    adjustScreens();
+}
 
 void UBDisplayManager::positionScreens()
 {
@@ -215,23 +231,21 @@ void UBDisplayManager::positionScreens()
             if (mDesktopWidget) {
                 mDesktopWidget->hide();
                 mDesktopWidget->setGeometry(screen->geometry());
-                printf("Primary desktop geometry: %dx%d\n", screen->geometry().width(), screen->geometry().height());
             }
             if (mControlWidget) {
                 mControlWidget->hide();
                 mControlWidget->setGeometry(screen->geometry());
                 UBPlatformUtils::showFullScreen(mControlWidget);
-                printf("Primary control geometry: %dx%d\n", screen->geometry().width(), screen->geometry().height());
             }
             continue;
         }
         QWidget* page = getPageWidget(role.page_offset);
         if (page) {
             page->hide();
+            if (role.page_offset == 0 && mIsShowingDesktop)
+                continue;
             page->setGeometry(screen->geometry());
             UBPlatformUtils::showFullScreen(page);
-            printf("page %d display geometry: %dx%d\n", role.page_offset,
-                   screen->geometry().width(), screen->geometry().height());
         }
     }
     if (mControlWidget)
@@ -277,3 +291,24 @@ void UBDisplayManager::unBlackout() {
     UBApplication::boardController->freezeW3CWidgets(false);
 }
 
+void UBDisplayManager::desktopModeChanged(bool displayed) {
+    /* Previously, the display screen also showed the desktop when the desktop mode
+     * was activated. This signal handler replicates the old behaviour.
+     * Usually, desktopModeChanged(false) is not triggered as the app controller
+     * methods do not emit it but mainModeChanged(...) instead.
+    **/
+    if (mIsShowingDesktop == displayed)
+        return;
+    mIsShowingDesktop = displayed;
+    if (!mDisplayWidget)
+        return;
+    mDisplayWidget->hide();
+    if (!displayed) {
+        mDisplayWidget->setGeometry(displayScreen()->geometry());
+        UBPlatformUtils::showFullScreen(mDisplayWidget);
+    }
+}
+
+void UBDisplayManager::mainModeChanged(UBApplicationController::MainMode mode) {
+    desktopModeChanged(false);
+}
