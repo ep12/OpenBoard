@@ -101,6 +101,9 @@ UBApplicationController::UBApplicationController(UBBoardView *pControlView,
     connect(mDisplayManager, SIGNAL(adjustDisplayViewsRequired()), UBApplication::boardController, SLOT(adjustDisplayViews()));
     connect(mUninoteController, SIGNAL(imageCaptured(const QPixmap &, bool)), this, SLOT(addCapturedPixmap(const QPixmap &, bool)));
     connect(mUninoteController, SIGNAL(restoreUniboard()), this, SLOT(hideDesktop()));
+    
+    connect(this, &UBApplicationController::desktopMode, mDisplayManager, &UBDisplayManager::desktopModeChanged);
+    connect(this, &UBApplicationController::mainModeChanged, mDisplayManager, &UBDisplayManager::mainModeChanged);
 
     for(int i = 0; i < mDisplayManager->numPreviousViews(); i++)
     {

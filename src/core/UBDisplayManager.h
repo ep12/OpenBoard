@@ -31,6 +31,7 @@
 #define UBDISPLAYMANAGER_H_
 
 #include <QtGui>
+#include "core/UBApplicationController.h"
 
 class UBBlackoutWidget;
 class UBBoardView;
@@ -90,13 +91,17 @@ class UBDisplayManager : public QObject
 
    public slots:
 
-        void reinitScreens(bool bswap);
-
+        void adjustScreens();
         void adjustScreens(int screen);
+        void screenGeometryChanged(QRect geometry);
+        void addOrRemoveScreen(QScreen* screen);
 
         void blackout();
 
         void unBlackout();
+
+        void desktopModeChanged(bool displayed);
+        void mainModeChanged(UBApplicationController::MainMode mode);
 
     private:
 
@@ -104,13 +109,8 @@ class UBDisplayManager : public QObject
 
         void getScreenRoles();
 
-        int mControlScreenIndex;
-
-        int mDisplayScreenIndex;
-
-        QList<int> mPreviousScreenIndexes;
-
-        QDesktopWidget* mDesktop;
+        void connectScreenSignals();
+        void disconnectScreenSignals();
 
         QWidget* mControlWidget;
 
@@ -123,6 +123,8 @@ class UBDisplayManager : public QObject
         QList<UBBlackoutWidget*> mBlackoutWidgets;
 
         bool mUseMultiScreen;
+
+        bool mIsShowingDesktop;
 
         QWidget* getPageWidget(int page);
 
